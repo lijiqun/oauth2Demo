@@ -1,4 +1,4 @@
-# FavOAuth2
+# OAuth2
 1. OAuth 2.0 是什么？
 
     OAuth 2.0是在2006年底创建的下一代OAuth协议。OAuth 2.0为客户端开发者开发Web应用，桌面端应用程序，移动应用及客厅设备提供特定的授权流程。该规范是IETF OAuth WG工作组下基于OAuth WRAP协议制定的。
