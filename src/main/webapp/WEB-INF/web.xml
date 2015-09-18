@@ -21,6 +21,16 @@
     <filter-name>encodingFilter</filter-name>
     <url-pattern>/*</url-pattern>
   </filter-mapping>
+  
+ <!--  <filter>
+  	<filter-name>oauthFilter</filter-name>
+    <filter-class>com.idvert.oauth.filter.OAuth2LoginFilter</filter-class>
+  </filter>
+  
+  <filter-mapping>
+  	<filter-name>oauthFilter</filter-name>
+  	<url-pattern>/favuserresource</url-pattern>
+  </filter-mapping> -->
   <listener>
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>

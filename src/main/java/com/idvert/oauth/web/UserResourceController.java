@@ -9,6 +9,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import org.apache.oltu.oauth2.common.message.OAuthResponse;
 import org.apache.oltu.oauth2.common.message.types.ParameterStyle;
+import org.apache.oltu.oauth2.common.token.BasicOAuthToken;
 import org.apache.oltu.oauth2.rs.request.OAuthAccessResourceRequest;
 import org.apache.oltu.oauth2.rs.response.OAuthRSResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.idvert.oauth.service.IAuthService;
 
@@ -36,7 +38,8 @@ public class UserResourceController {
                     new OAuthAccessResourceRequest(request, ParameterStyle.QUERY);
             // 获取Access Token
             String accessToken = oauthRequest.getAccessToken();
-
+            BasicOAuthToken oAuthToken = new BasicOAuthToken(accessToken);
+            System.out.println(oAuthToken.getExpiresIn()+"<<<><>");
             // 验证Access Token
             if (!authService.checkAccessToken(accessToken)) {
                 // 如果不存在/过期了，返回未验证错误，需重新验证

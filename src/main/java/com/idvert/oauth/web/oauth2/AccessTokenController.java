@@ -30,7 +30,7 @@ public class AccessTokenController {
 	IAuthService authService;
 	
 	@RequestMapping("favaccesstoken")
-	public HttpEntity accessToken(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException{
+	public HttpEntity<String> accessToken(HttpServletRequest request) throws OAuthSystemException, OAuthProblemException{
 		//构建OAuth请求
 		OAuthTokenRequest tokenRequest = new OAuthTokenRequest(request);
 		//获取OAuth客户端Id
@@ -42,9 +42,8 @@ public class AccessTokenController {
 					.setError(OAuthError.TokenResponse.INVALID_CLIENT)
 					.setErrorDescription("无效的客户端Id")
 					.buildJSONMessage();
-			return new ResponseEntity(oAuthResponse.getBody(), HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
+			return new ResponseEntity<String>(oAuthResponse.getBody(), HttpStatus.valueOf(oAuthResponse.getResponseStatus()));
 		}
-				
 		
 		//检查客户端安全KEY是否正确
 		if(!authService.checkClientSecret(tokenRequest.getClientSecret())){
@@ -52,7 +51,7 @@ public class AccessTokenController {
 						.setError(OAuthError.TokenResponse.UNAUTHORIZED_CLIENT)
 						.setErrorDescription("客户端安全KEY认证失败！")
 						.buildJSONMessage();
-			return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+			return new ResponseEntity<String>(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 		}
 		
 		
@@ -64,7 +63,7 @@ public class AccessTokenController {
 						.setError(OAuthError.TokenResponse.INVALID_GRANT)
 		                .setErrorDescription("错误的授权码")  
 		                .buildJSONMessage();
-				return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+				return new ResponseEntity<String>(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 			}
 		}
 		
@@ -76,10 +75,12 @@ public class AccessTokenController {
 		//生成OAuth响应
 		OAuthResponse response = OAuthASResponse
 				.tokenResponse(HttpServletResponse.SC_OK)
+				.setParam("sss", "ssss")
 				.setAccessToken(accessToken)
-				.setExpiresIn(String.valueOf(authService.getExpireIn()))
+				.setExpiresIn(String.valueOf(authService.getExpireIn())
+				)
 				.buildJSONMessage();
-		return new ResponseEntity(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
+		return new ResponseEntity<String>(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 	}
 
 }

@@ -8,5 +8,7 @@
 </head>
 <body>
 Hello World!!!
+<br/>
+<a href="user/register">注册账号</a>
 </body>
 </html>

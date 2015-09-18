@@ -21,7 +21,6 @@ public class OAuth2LoginFilter extends OncePerRequestFilter {
 		//创建令牌
 		String accessToken = request.getParameter(OAuth.OAUTH_CODE);
 		BasicOAuthToken oAuthToken = new BasicOAuthToken(accessToken);
-		System.out.println(oAuthToken.getAccessToken());
 		doFilter(request, response, filterChain);
 		
 	}
