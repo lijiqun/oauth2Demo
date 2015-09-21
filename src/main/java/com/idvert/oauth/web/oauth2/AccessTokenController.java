@@ -77,7 +77,7 @@ public class AccessTokenController {
 				.tokenResponse(HttpServletResponse.SC_OK)
 				.setAccessToken(accessToken)
 				.setExpiresIn(String.valueOf(authService.getExpireIn())
-				)
+				).setScope(tokenRequest.getScopes().toString())
 				.buildJSONMessage();
 		return new ResponseEntity<String>(response.getBody(), HttpStatus.valueOf(response.getResponseStatus()));
 	}
