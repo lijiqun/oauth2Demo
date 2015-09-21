@@ -4,10 +4,8 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.oltu.oauth2.client.OAuthClient;
 import org.apache.oltu.oauth2.client.URLConnectionClient;
-import org.apache.oltu.oauth2.client.request.OAuthBearerClientRequest;
 import org.apache.oltu.oauth2.client.request.OAuthClientRequest;
 import org.apache.oltu.oauth2.client.response.OAuthAccessTokenResponse;
-import org.apache.oltu.oauth2.client.response.OAuthResourceResponse;
 import org.apache.oltu.oauth2.common.OAuth;
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
@@ -27,6 +25,8 @@ public class ClientLoginController {
 
     @Autowired
     IAuthService favAuthService;
+    
+    private static final String GET_ACCESS_TOKEN_URL = "http://localhost:8080/oauth2/favaccesstoken";
 
     @RequestMapping("clientlogin")
     public ModelAndView clientLogin(HttpServletRequest request) {
@@ -49,7 +49,6 @@ public class ClientLoginController {
 
         ModelAndView mav = new ModelAndView();
         String authCode = request.getParameter(OAuth.OAUTH_CODE);
-        System.out.println(request.getParameterMap().toString());
         if (StringUtils.isEmpty(authCode)) {
             mav.setViewName("client/home_client");
             return mav;
@@ -60,26 +59,24 @@ public class ClientLoginController {
             OAuthClient oAuthClient = new OAuthClient(new URLConnectionClient());
 
             OAuthClientRequest accessTokenRequest = OAuthClientRequest
-                    .tokenLocation("http://localhost:8080/oauth2/favaccesstoken")
+                    .tokenLocation(GET_ACCESS_TOKEN_URL)
                     .setGrantType(GrantType.AUTHORIZATION_CODE)
-                    .setScope("test")
+                    .setScope(request.getParameter(OAuth.OAUTH_SCOPE))
                     .setClientId(request.getParameter(OAuth.OAUTH_CLIENT_ID))
                     .setClientSecret(request.getParameter(OAuth.OAUTH_CLIENT_SECRET)).setCode(authCode)
                     .setRedirectURI(request.getParameter(OAuth.OAUTH_REDIRECT_URI)).buildQueryMessage();
             
             OAuthAccessTokenResponse oAuthResponse =
                     oAuthClient.accessToken(accessTokenRequest, OAuth.HttpMethod.POST);
-            
 
-            String accessToken = oAuthResponse.getAccessToken();
-            Long expiresIn = oAuthResponse.getExpiresIn();
-            OAuthClientRequest userInfoRequest = new OAuthBearerClientRequest(request.getParameter(OAuth.OAUTH_REDIRECT_URI))
-                    .setAccessToken(accessToken).buildQueryMessage();
-
-            OAuthResourceResponse resourceResponse = oAuthClient.resource(userInfoRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
-            String username = resourceResponse.getBody();
-            System.out.println(username+":::::");
-            return username;
+//            String accessToken = oAuthResponse.getAccessToken();
+//            Long expiresIn = oAuthResponse.getExpiresIn();
+//            OAuthClientRequest userInfoRequest = new OAuthBearerClientRequest(request.getParameter(OAuth.OAUTH_REDIRECT_URI))
+//                    .setAccessToken(accessToken).buildQueryMessage();
+//
+//            OAuthResourceResponse resourceResponse = oAuthClient.resource(userInfoRequest, OAuth.HttpMethod.GET, OAuthResourceResponse.class);
+//            String username = resourceResponse.getBody();
+            return oAuthResponse.getBody();
         }
 
         return mav;

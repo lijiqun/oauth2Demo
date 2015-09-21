@@ -50,21 +50,20 @@ public class AuthorizeController {
                 OAuthResponse response =
                         OAuthASResponse.errorResponse(HttpServletResponse.SC_BAD_REQUEST)
                                 .setError(OAuthError.TokenResponse.INVALID_CLIENT)
-                                .setErrorDescription("客户端id不正确")
-                                .buildJSONMessage();
+                                .setErrorDescription("客户端id不正确").buildJSONMessage();
                 return new ResponseEntity<String>(response.getBody(),
                         HttpStatus.valueOf(response.getResponseStatus()));
             }
 
 
-//            Subject subject = SecurityUtils.getSubject();
+            // Subject subject = SecurityUtils.getSubject();
             // 如果用户没有登录，跳转到登陆页面
             HttpSession session = request.getSession();
             if (session.getAttribute("favUser") == null) {
                 return "login/login";
             }
-            
-            User user = (User)session.getAttribute("favUser");
+
+            User user = (User) session.getAttribute("favUser");
             String username = user.getUsername();
             // 生成授权码
             String authorizationCode = null;
@@ -81,11 +80,8 @@ public class AuthorizeController {
                     OAuthASResponse.authorizationResponse(request, HttpServletResponse.SC_FOUND);
             // 设置授权码
             builder.setCode(authorizationCode);
-            builder.setParam(OAuth.OAUTH_CLIENT_ID, oauthRequest.getParam(OAuth.OAUTH_CLIENT_ID));
-            builder.setParam(OAuth.OAUTH_CLIENT_SECRET, oauthRequest.getParam(OAuth.OAUTH_CLIENT_SECRET));
-            builder.setParam(OAuth.OAUTH_REDIRECT_URI, oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI));
             // 得到到客户端重定向地址
-            String redirectURI = "http://localhost:8080/client/clienthome";//oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
+            String redirectURI = oauthRequest.getParam(OAuth.OAUTH_REDIRECT_URI);
 
             // 构建响应
             final OAuthResponse response = builder.location(redirectURI).buildQueryMessage();
@@ -93,14 +89,16 @@ public class AuthorizeController {
             // 根据OAuthResponse返回ResponseEntity响应
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(new URI(response.getLocationUri()));
-            return new ResponseEntity<String>(headers, HttpStatus.valueOf(response.getResponseStatus()));
+            return new ResponseEntity<String>(headers,
+                    HttpStatus.valueOf(response.getResponseStatus()));
         } catch (OAuthProblemException e) {
 
             // 出错处理
             String redirectUri = e.getRedirectUri();
             if (OAuthUtils.isEmpty(redirectUri)) {
                 // 告诉客户端没有传入redirectUri直接报错
-                return new ResponseEntity<String>("OAuth callback url needs to be provided by client!!!",
+                return new ResponseEntity<String>(
+                        "OAuth callback url needs to be provided by client!!!",
                         HttpStatus.NOT_FOUND);
             }
 
@@ -110,7 +108,8 @@ public class AuthorizeController {
                             .location(redirectUri).buildQueryMessage();
             HttpHeaders headers = new HttpHeaders();
             headers.setLocation(new URI(response.getLocationUri()));
-            return new ResponseEntity<String>(headers, HttpStatus.valueOf(response.getResponseStatus()));
+            return new ResponseEntity<String>(headers,
+                    HttpStatus.valueOf(response.getResponseStatus()));
         }
     }
 

@@ -19,7 +19,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.idvert.oauth.service.IAuthService;
 
@@ -39,7 +38,6 @@ public class UserResourceController {
             // 获取Access Token
             String accessToken = oauthRequest.getAccessToken();
             BasicOAuthToken oAuthToken = new BasicOAuthToken(accessToken);
-            System.out.println(oAuthToken.getExpiresIn()+"<<<><>");
             // 验证Access Token
             if (!authService.checkAccessToken(accessToken)) {
                 // 如果不存在/过期了，返回未验证错误，需重新验证
@@ -50,7 +48,7 @@ public class UserResourceController {
                 HttpHeaders headers = new HttpHeaders();
                 headers.add(OAuth.HeaderType.WWW_AUTHENTICATE,
                         oauthResponse.getHeader(OAuth.HeaderType.WWW_AUTHENTICATE));
-                return new ResponseEntity(headers, HttpStatus.UNAUTHORIZED);
+                return new ResponseEntity("token invalid", HttpStatus.UNAUTHORIZED);
             }
             // 返回用户名
             String username = authService.getUsernameByAccessToken(accessToken);

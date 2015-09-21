@@ -27,15 +27,17 @@ public class LoginController {
 		request.setAttribute("username", username);
 		request.setAttribute("password", password);
 		if(StringUtils.isEmpty(username)){
-			mav.setViewName("forward:/login");
+			mav.setViewName("forward:/login/login");
 			return mav;
 		}
+		System.out.println(request.getParameter("client_id"));
 		User favUser = new User();
 		favUser.setUsername(username);
 		favUser.setPassword(password);
 		session.setAttribute("favUser", favUser);
 		mav.addObject("favUser", favUser);
-		mav.setViewName("forward:/admin");
+		String para = request.getParameter("requestUrl");
+		mav.setViewName("forward:/oauth2/favauthorize"+para);
 		return mav;
 	}
 	

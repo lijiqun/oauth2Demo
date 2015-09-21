@@ -75,7 +75,6 @@ public class AccessTokenController {
 		//生成OAuth响应
 		OAuthResponse response = OAuthASResponse
 				.tokenResponse(HttpServletResponse.SC_OK)
-				.setParam("sss", "ssss")
 				.setAccessToken(accessToken)
 				.setExpiresIn(String.valueOf(authService.getExpireIn())
 				)
